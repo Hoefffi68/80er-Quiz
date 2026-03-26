@@ -66,11 +66,15 @@
     </div>
 
 <script>
-    // Die Fragen direkt als einfaches Array
+    // Deine erweiterten 80er-Fragen
     const fragen = [
-        { q: "Wer sang 'Take On Me'?", a: "a-ha", o: ["a-ha", "Duran Duran", "Alphaville"] },
-        { q: "Interpret von 'Shout'?", a: "Tears for Fears", o: ["Simple Minds", "Tears for Fears", "U2"] },
-        { q: "Wer sang 'In the Air Tonight'?", a: "Phil Collins", o: ["Phil Collins", "Sting", "Peter Gabriel"] }
+        { q: "Zu welchem Interpreten gehört der Song 'Shout'?", a: "Tears for Fears", o: ["Tears for Fears", "Simple Minds", "A Flock of Seagulls"] },
+        { q: "Wer veröffentlichte den Song 'Running Up That Hill'?", a: "Kate Bush", o: ["Kate Bush", "Annie Lennox", "Belinda Carlisle"] },
+        { q: "Von wem stammt der Titel 'Take On Me'?", a: "a-ha", o: ["a-ha", "Duran Duran", "Spandau Ballet"] },
+        { q: "Welcher Künstler steht hinter dem Song 'In the Air Tonight'?", a: "Phil Collins", o: ["Phil Collins", "Peter Gabriel", "Sting"] },
+        { q: "Wer ist der Interpret von 'With or Without You'?", a: "U2", o: ["U2", "The Police", "R.E.M."] },
+        { q: "Welche Band sang 'Enjoy the Silence'?", a: "Depeche Mode", o: ["Depeche Mode", "The Cure", "New Order"] },
+        { q: "Wer ist die 'Material Girl'?", a: "Madonna", o: ["Madonna", "Cyndi Lauper", "Whitney Houston"] }
     ];
 
     let aktuelleFrage = 0;
@@ -79,6 +83,8 @@
     let uhr;
 
     function jetztStarten() {
+        // Fragen bei jedem Start neu mischen
+        fragen.sort(() => Math.random() - 0.5);
         document.getElementById('s-start').classList.add('hidden');
         document.getElementById('s-game').classList.remove('hidden');
         frageAnzeigen();
@@ -92,8 +98,10 @@
         const zone = document.getElementById('ans-zone');
         zone.innerHTML = '';
         
-        // Antworten mischen und Buttons bauen
-        [...f.o].sort(() => Math.random() - 0.5).forEach(opt => {
+        // Antworten mischen
+        const optionen = [...f.o].sort(() => Math.random() - 0.5);
+        
+        optionen.forEach(opt => {
             const b = document.createElement('button');
             b.innerText = opt;
             b.className = 'btn';
@@ -101,7 +109,6 @@
             zone.appendChild(b);
         });
 
-        // Timer starten
         sekunden = 10;
         document.getElementById('timer').innerText = "Zeit: " + sekunden;
         clearInterval(uhr);
@@ -122,9 +129,10 @@
     function ende() {
         document.getElementById('s-game').classList.add('hidden');
         document.getElementById('s-result').classList.remove('hidden');
-        document.getElementById('res-text').innerText = punkte + " / " + fragen.length;
+        document.getElementById('res-text').innerText = punkte + " / " + fragen.length + " Treffer";
     }
 </script>
+
 
 </body>
 </html>
