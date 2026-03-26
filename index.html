@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80er Quiz</title>
+    <style>
+        body { 
+            background: #050510; 
+            color: #0ff; 
+            font-family: sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .box { 
+            border: 3px solid #f0f; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 0 20px #0ff; 
+            max-width: 400px; 
+            width: 90%; 
+            text-align: center; 
+            background: rgba(10, 10, 30, 0.9);
+        }
+        .btn { 
+            background: none; 
+            border: 2px solid #0ff; 
+            color: #0ff; 
+            padding: 15px; 
+            width: 100%; 
+            margin: 10px 0; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn:hover { background: #0ff; color: #000; }
+        #timer { color: #f0f; font-size: 1.2rem; margin-bottom: 15px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h1 style="color: #0ff; text-shadow: 0 0 10px #0ff;">80s QUIZ</h1>
+        
+        <div id="s-start">
+            <p>Testen Sie Ihr Wissen!</p>
+            <button class="btn" onclick="jetztStarten()">START</button>
+        </div>
+
+        <div id="s-game" class="hidden">
+            <div id="timer">Zeit: 10</div>
+            <p id="q-text" style="font-size: 1.2rem; min-height: 50px;"></p>
+            <div id="ans-zone"></div>
+        </div>
+
+        <div id="s-result" class="hidden">
+            <h2>FERTIG!</h2>
+            <p id="res-text" style="font-size: 1.5rem; color: #f0f;"></p>
+            <button class="btn" onclick="location.reload()">NOCHMAL</button>
+        </div>
+    </div>
+
+<script>
+    // Die Fragen direkt als einfaches Array
+    const fragen = [
+        { q: "Wer sang 'Take On Me'?", a: "a-ha", o: ["a-ha", "Duran Duran", "Alphaville"] },
+        { q: "Interpret von 'Shout'?", a: "Tears for Fears", o: ["Simple Minds", "Tears for Fears", "U2"] },
+        { q: "Wer sang 'In the Air Tonight'?", a: "Phil Collins", o: ["Phil Collins", "Sting", "Peter Gabriel"] }
+    ];
+
+    let aktuelleFrage = 0;
+    let punkte = 0;
+    let sekunden = 10;
+    let uhr;
+
+    function jetztStarten() {
+        document.getElementById('s-start').classList.add('hidden');
+        document.getElementById('s-game').classList.remove('hidden');
+        frageAnzeigen();
+    }
+
+    function frageAnzeigen() {
+        if(aktuelleFrage >= fragen.length) return ende();
+        
+        const f = fragen[aktuelleFrage];
+        document.getElementById('q-text').innerText = f.q;
+        const zone = document.getElementById('ans-zone');
+        zone.innerHTML = '';
+        
+        // Antworten mischen und Buttons bauen
+        [...f.o].sort(() => Math.random() - 0.5).forEach(opt => {
+            const b = document.createElement('button');
+            b.innerText = opt;
+            b.className = 'btn';
+            b.onclick = () => check(opt);
+            zone.appendChild(b);
+        });
+
+        // Timer starten
+        sekunden = 10;
+        document.getElementById('timer').innerText = "Zeit: " + sekunden;
+        clearInterval(uhr);
+        uhr = setInterval(() => {
+            sekunden--;
+            document.getElementById('timer').innerText = "Zeit: " + sekunden;
+            if(sekunden <= 0) check("");
+        }, 1000);
+    }
+
+    function check(wahl) {
+        clearInterval(uhr);
+        if(wahl === fragen[aktuelleFrage].a) punkte++;
+        aktuelleFrage++;
+        frageAnzeigen();
+    }
+
+    function ende() {
+        document.getElementById('s-game').classList.add('hidden');
+        document.getElementById('s-result').classList.remove('hidden');
+        document.getElementById('res-text').innerText = punkte + " / " + fragen.length;
+    }
+</script>
+
+</body>
+</html>
