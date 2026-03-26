@@ -13,66 +13,95 @@
     </style>
 </head>
 <body>
+<body>
     <div class="box">
         <h1>80s Quiz</h1>
-        <div id="game">
+        
+        <div id="start-screen">
+            <p>Bereit für die Zeitreise?</p>
+            <button class="btn" onclick="startQuiz()">QUIZ STARTEN</button>
+        </div>
+
+        <div id="game" style="display:none">
             <div id="timer">Zeit: 10</div>
-            <p id="question">Lade...</p>
+            <p id="question">Lade Frage...</p>
             <div id="options"></div>
         </div>
+
         <div id="result" style="display:none">
             <h2>Fertig!</h2>
-            <p id="score"></p>
+            <p id="score-text"></p>
             <button class="btn" onclick="location.reload()">Neustart</button>
         </div>
     </div>
 
 <script>
     const data = [
-        { q: "Interpret von 'Shout'?", opts: ["Tears for Fears", "Simple Minds", "A-ha"], a: "Tears for Fears" },
-        { q: "Wer sang 'Take On Me'?", opts: ["a-ha", "Duran Duran", "Depeche Mode"], a: "a-ha" }
+        { q: "Zu welchem Interpreten gehört der Song 'Shout'?", opts: ["Tears for Fears", "Simple Minds", "A-ha"], a: "Tears for Fears" },
+        { q: "Wer veröffentlichte 'Running Up That Hill'?", opts: ["Kate Bush", "Annie Lennox", "Madonna"], a: "Kate Bush" },
+        { q: "Von wem stammt 'Take On Me'?", opts: ["a-ha", "Duran Duran", "Alphaville"], a: "a-ha" },
+        { q: "Interpret von 'In the Air Tonight'?", opts: ["Phil Collins", "Peter Gabriel", "Sting"], a: "Phil Collins" },
+        { q: "Wer sang 'With or Without You'?", opts: ["U2", "The Police", "Depeche Mode"], a: "U2" }
     ];
 
     let idx = 0, score = 0, timeLeft = 10, timer;
 
-    function show() {
-        if(idx >= data.length) return end();
-        const q = data[idx];
-        document.getElementById('question').innerText = q.q;
-        const optDiv = document.getElementById('options');
-        optDiv.innerHTML = '';
-        q.opts.sort(() => Math.random() - 0.5).forEach(o => {
-            const b = document.createElement('button');
-            b.innerText = o; b.className = 'btn';
-            b.onclick = () => check(o);
-            optDiv.appendChild(b);
-        });
-        startTimer();
+    function startQuiz() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
+        showNextQuestion();
     }
 
-    function startTimer() {
+    function showNextQuestion() {
+        if(idx >= data.length) return endQuiz();
+        
+        const qData = data[idx];
+        document.getElementById('question').innerText = qData.q;
+        
+        const optDiv = document.getElementById('options');
+        optDiv.innerHTML = '';
+        
+        // Antworten mischen
+        const shuffledOpts = [...qData.opts].sort(() => Math.random() - 0.5);
+        
+        shuffledOpts.forEach(o => {
+            const b = document.createElement('button');
+            b.innerText = o; 
+            b.className = 'btn';
+            b.onclick = () => checkAnswer(o);
+            optDiv.appendChild(b);
+        });
+        
+        resetTimer();
+    }
+
+    function resetTimer() {
         timeLeft = 10;
+        document.getElementById('timer').innerText = "Zeit: " + timeLeft;
         clearInterval(timer);
         timer = setInterval(() => {
             timeLeft--;
             document.getElementById('timer').innerText = "Zeit: " + timeLeft;
-            if(timeLeft <= 0) check("");
+            if(timeLeft <= 0) checkAnswer("");
         }, 1000);
     }
 
-    function check(sel) {
-        if(sel === data[idx].a) score++;
-        idx++; show();
+    function checkAnswer(selected) {
+        clearInterval(timer);
+        if(selected === data[idx].a) {
+            score++;
+        }
+        idx++;
+        showNextQuestion();
     }
 
-    function end() {
-        clearInterval(timer);
+    function endQuiz() {
         document.getElementById('game').style.display = 'none';
         document.getElementById('result').style.display = 'block';
-        document.getElementById('score').innerText = score + " von " + data.length + " richtig!";
+        document.getElementById('score-text').innerText = score + " von " + data.length + " richtig!";
     }
-
-    show();
 </script>
+</body>
+
 </body>
 </html>
